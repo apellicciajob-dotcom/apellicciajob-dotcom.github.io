@@ -15,13 +15,13 @@
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI Variable Display","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;scroll-padding-top:110px;-webkit-text-size-adjust:100%}
+html{scroll-behavior:smooth;scroll-padding-top:150px;-webkit-text-size-adjust:100%}
 body{font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.47;font-size:17px;letter-spacing:-.011em;-webkit-font-smoothing:antialiased}
 a{color:var(--acc);text-decoration:none}
 a:hover{text-decoration:underline}
 .wrap{max-width:980px;margin:0 auto;padding:0 22px}
 nav{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
-nav .wrap{display:flex;justify-content:space-between;align-items:center;gap:22px;height:96px;max-width:1280px}
+nav .top{display:flex;justify-content:space-between;align-items:center;gap:22px;height:88px}nav .menu{border-top:1px solid var(--line)}nav .menu ul{height:48px;align-items:center;gap:30px;overflow-x:auto;scrollbar-width:none}nav .menu ul::-webkit-scrollbar{display:none}
 nav .id{display:flex;align-items:center;gap:14px;color:var(--ink);min-width:0}
 nav .id:hover{text-decoration:none}
 nav .mini{width:68px;height:68px;border-radius:50%;object-fit:cover;flex:none;box-shadow:0 3px 14px rgba(0,0,0,.2)}
@@ -91,19 +91,23 @@ footer{padding:36px 0 52px;text-align:center;color:var(--muted);font-size:13px}
 .js .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
 .js .reveal.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.js .reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
-@media (max-width:1340px){nav ul{display:none}}
-@media (max-width:860px){nav .id small{display:none}nav .wrap{height:80px}nav .mini{width:56px;height:56px}nav .id b{font-size:22px}}
-@media (max-width:640px){nav .wrap{height:64px;gap:10px}nav .mini{width:40px;height:40px}nav .id b{font-size:16px}nav .id small{display:none}nav .pill.alt{display:none}nav .pill{padding:8px 14px}html{scroll-padding-top:74px}.hero{padding:48px 0}.job,.box,.dl{padding:26px 22px;border-radius:24px}section{padding:52px 0}}
+
+@media (max-width:860px){nav .id small{display:none}nav .top{height:76px}nav .menu ul{font-size:16px;gap:22px}nav .mini{width:56px;height:56px}nav .id b{font-size:22px}}
+@media (max-width:640px){nav .top{height:60px;gap:10px}nav .menu ul{height:42px;font-size:15px;gap:20px}nav .mini{width:40px;height:40px}nav .id b{font-size:16px}nav .id small{display:none}nav .pill.alt{display:none}nav .pill{padding:8px 14px}html{scroll-padding-top:116px}.hero{padding:48px 0}.job,.box,.dl{padding:26px 22px;border-radius:24px}section{padding:52px 0}}
 </style>
 <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
 
-<nav><div class="wrap">
+<nav>
+<div class="wrap top">
   <a class="id" href="#profilo"><img class="mini" src="assets/foto.png" alt="Alessandro Pelliccia" width="50" height="50"><span><b>Alessandro Pelliccia</b><small>Direttore Commerciale · Business Developer · Sales Manager</small></span></a>
-  <ul><li><a href="#numeri">Numeri</a></li><li><a href="#esperienza">Esperienza</a></li><li><a href="#competenze">Competenze</a></li><li><a href="area-riservata/">Area riservata</a></li></ul>
   <div class="acts"><a class="pill main" href="#download">Scarica il CV</a><a class="pill alt" href="mailto:a.pelliccia.job@gmail.com">Scrivimi</a></div>
-</div></nav>
+</div>
+<div class="menu"><div class="wrap">
+  <ul><li><a href="#numeri">Numeri</a></li><li><a href="#esperienza">Esperienza</a></li><li><a href="#competenze">Competenze</a></li><li><a href="area-riservata/">Area riservata</a></li></ul>
+</div></div>
+</nav>
 
 <main>
 
