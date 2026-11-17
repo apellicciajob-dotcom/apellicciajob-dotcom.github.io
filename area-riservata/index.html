@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Area riservata · Alessandro Pelliccia</title>
+<style>
+:root{--bg:#f5f5f7;--card:#fff;--text:#1d1d1f;--muted:#6e6e73;--acc:#1f5aa6;--line:#d2d2d7}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.box{background:var(--card);border-radius:28px;padding:40px 36px;width:100%;max-width:460px;box-shadow:0 8px 40px rgba(0,0,0,.06)}
+h1{font-size:28px;letter-spacing:-.02em;margin:0 0 6px}
+p.s{color:var(--muted);margin:0 0 24px;font-size:16px}
+label{display:block;font-size:14px;color:var(--muted);margin:14px 0 6px}
+input{width:100%;font-size:17px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--text)}
+input:focus{outline:2px solid var(--acc);border-color:transparent}
+button,.btn{margin-top:22px;width:100%;font-size:17px;padding:13px;border:0;border-radius:980px;background:var(--acc);color:#fff;cursor:pointer;font-weight:500}
+button:disabled{opacity:.6;cursor:wait}
+.err{color:#c0262d;font-size:15px;margin-top:14px;min-height:20px}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-top:1px solid var(--line)}
+li:first-child{border-top:0}
+li span{font-size:16px;word-break:break-word}
+li small{display:block;color:var(--muted);font-size:13px}
+li button{margin:0;width:auto;padding:8px 18px;font-size:15px;flex:none}
+a.back{display:inline-block;margin-top:22px;color:var(--acc);text-decoration:none;font-size:15px}
+.out{background:transparent;color:var(--acc);border:1px solid var(--line);width:auto;padding:8px 18px;font-size:15px;margin-top:0}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.top h1{margin:0}
+[hidden]{display:none!important}
+@media (prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--text:#f5f5f7;--muted:#98989d;--acc:#4c8dde;--line:#3a3a3c}input{background:#2c2c2e}}
+</style>
+</head>
+<body>
+<div class="box">
+  <form id="login">
+    <h1>Area riservata</h1>
+    <p class="s">Inserisci le tue credenziali per vedere i documenti.</p>
+    <label for="u">ID utente</label>
+    <input id="u" autocomplete="username" autocapitalize="off" spellcheck="false" required>
+    <label for="p">Password</label>
+    <input id="p" type="password" autocomplete="current-password" required>
+    <button id="go" type="submit">Accedi</button>
+    <div class="err" id="err" role="alert"></div>
+    <a class="back" href="../">← Torna al sito</a>
+  </form>
+  <div id="docs" hidden>
+    <div class="top"><h1>I miei documenti</h1><button class="out" id="exit" type="button">Esci</button></div>
+    <ul id="list"></ul>
+    <a class="back" href="../">← Torna al sito</a>
+  </div>
+</div>
+<script type="module">
+import { openManifest, openFile } from "./vault.js";
+const $ = (id) => document.getElementById(id);
+let key = null;
+$("login").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const go = $("go"); go.disabled = true; go.textContent = "Verifica in corso…"; $("err").textContent = "";
+  try {
+    const r = await fetch("vault/manifest.json", { cache: "no-store" });
+    if (!r.ok) throw new Error("vuoto");
+    const res = await openManifest(await r.json(), $("u").value, $("p").value);
+    key = res.key;
+    const ul = $("list"); ul.textContent = "";
+    if (!res.files.length) { ul.innerHTML = "<li><span>Nessun documento presente.</span></li>"; }
+    for (const f of res.files) {
+      const li = document.createElement("li");
+      const sp = document.createElement("span"); sp.textContent = f.name;
+      const sm = document.createElement("small"); sm.textContent = Math.max(1, Math.round(f.size / 1024)) + " KB"; sp.appendChild(sm);
+      const b = document.createElement("button"); b.type = "button"; b.textContent = "Scarica";
+      b.addEventListener("click", async () => {
+        b.disabled = true;
+        try {
+          const rr = await fetch("vault/" + f.file, { cache: "no-store" });
+          const data = await openFile(await rr.arrayBuffer(), key);
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(new Blob([data])); a.download = f.name;
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        } catch (_) { alert("Impossibile aprire il documento."); }
+        b.disabled = false;
+      });
+      li.append(sp, b); ul.appendChild(li);
+    }
+    $("login").hidden = true; $("docs").hidden = false;
+  } catch (_) {
+    $("err").textContent = "ID utente o password non corretti.";
+  }
+  go.disabled = false; go.textContent = "Accedi"; $("p").value = "";
+});
+$("exit").addEventListener("click", () => { key = null; $("docs").hidden = true; $("list").textContent = ""; $("login").hidden = false; $("u").value = ""; $("u").focus(); });
+</script>
+</body>
+</html>
